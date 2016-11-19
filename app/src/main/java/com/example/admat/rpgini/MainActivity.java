@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                                             email = json.getString("email");
                                             userid = json.getString("id");
                                             name = json.getString("name");
-                                            info.setText("Hi " + name + "n" + email);
+                                            info.setText("Hi " + name + "\n" + email);
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -99,10 +99,45 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+
+        if(isLoggedIn()){ //Put this here because what if the log in session is still active?
+            GraphRequest request = GraphRequest.newMeRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            JSONObject json = response.getJSONObject();
+                            Log.v("MainActivity", response.toString());
+                            if(object != null){
+                                try {
+                                    if(json != null){
+                                        email = json.getString("email");
+                                        userid = json.getString("id");
+                                        name = json.getString("name");
+                                        info.setText("Hi " + name + "\n" + "Email: " + email);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+            continueButton.setEnabled(true);
+            Bundle parameters = new Bundle();
+            parameters.putString("fields", "id,name,email");
+            request.setParameters(parameters);
+            request.executeAsync();
+            accesstokenTracker.startTracking();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public boolean isLoggedIn() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        return accessToken != null;
     }
 }
