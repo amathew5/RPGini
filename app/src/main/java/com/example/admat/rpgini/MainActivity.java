@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -123,6 +124,14 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
             continueButton.setEnabled(true);
+            continueButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this,GameplayActivity.class);
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(),"Continue Hit!",Toast.LENGTH_LONG).show();
+                }
+            });
             Bundle parameters = new Bundle();
             parameters.putString("fields", "id,name,email");
             request.setParameters(parameters);
