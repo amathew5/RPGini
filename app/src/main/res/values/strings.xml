@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">RPGini</string>
     <string name="facebook_app_id">1818125735122796</string>
+    <string name="strength_attack">Strength Attack</string>
+    <string name="magic_attack">Magic Attack</string>
+    <string name="block">Block</string>
 </resources>
