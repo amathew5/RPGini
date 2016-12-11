@@ -29,7 +29,8 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             tools:replace="android:theme" />
-        <activity android:name=".GameplayActivity"></activity>
+        <activity android:name=".GameplayActivity" />
+        <activity android:name=".Main2Activity"></activity>
     </application>
 
 </manifest>

@@ -10,6 +10,17 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.admat.rpgini.MainActivity">
 
+    <Button
+        android:text="Logout"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:id="@+id/button5"
+        android:layout_marginTop="17dp"
+        android:visibility="invisible"
+        android:layout_below="@+id/editText2"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal" />
+
     <TextView
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
@@ -17,15 +28,6 @@
         android:textSize="40dp"
         android:id="@+id/name"
         android:text="Welcome to RPGini" />
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/name"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="158dp" />
 
     <TextView
         android:text=""
@@ -46,4 +48,62 @@
         android:layout_marginTop="61dp"
         android:id="@+id/button2"
         android:enabled="false"/>
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/emailloginbutton"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Email Login/Create"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:id="@+id/emailloginbutton"
+        android:layout_marginTop="17dp"
+        android:layout_below="@+id/editText2"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"/>
+
+    <EditText
+        android:hint="i.e. bob.ross@gmail.com"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/editText"
+        android:layout_marginTop="31dp"
+        android:layout_below="@+id/name"
+        android:layout_alignStart="@+id/login_button" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:layout_marginTop="25dp"
+        android:id="@+id/editText2"
+        android:layout_below="@+id/editText"
+        android:layout_alignStart="@+id/editText" />
+
+    <TextView
+        android:text="Email:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:layout_alignBaseline="@+id/editText"
+        android:layout_alignBottom="@+id/editText"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Password:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:layout_alignBaseline="@+id/editText2"
+        android:layout_alignBottom="@+id/editText2"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
