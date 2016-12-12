@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(MainActivity.this,GameplayActivity.class);
                     startActivity(intent);
-                    Toast.makeText(getApplicationContext(),"Continue Hit!",Toast.LENGTH_LONG).show();
+             //       Toast.makeText(getApplicationContext(),"Continue Hit!",Toast.LENGTH_LONG).show();
                 }
             });
             Bundle parameters = new Bundle();
