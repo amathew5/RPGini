@@ -4,9 +4,12 @@ import android.*;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,10 +24,12 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private LatLng currentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 Intent battleIntent = new Intent(MapsActivity.this, GameplayActivity.class);
+                if(currentLocation != null) {
+                    battleIntent.putExtra("seed",(currentLocation.latitude % 1337)+(currentLocation.longitude % 455));
+                }
                 startActivity(battleIntent);
             }
         });
@@ -64,15 +72,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .getSystemService(LOCATION_SERVICE);
 
         try {
-            if(locationManager != null) {
+            if (locationManager != null) {
                 Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 // Add a marker in Sydney and move the camera
-                LatLng sydney = new LatLng(location.getLatitude(),location.getLongitude());//(-34, 151);
-                Toast.makeText(getApplicationContext(),"You are at: "+sydney.latitude+", "+sydney.longitude,Toast.LENGTH_LONG).show();
-                mMap.addMarker(new MarkerOptions().position(sydney).title("Where you are"));
-                mMap.addCircle(new CircleOptions().center(sydney).radius(10000));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,11));
-                mMap.setLatLngBoundsForCameraTarget(new LatLngBounds(new LatLng(sydney.latitude+0.05,sydney.longitude-0.05),new LatLng(sydney.latitude-0.05,sydney.longitude-0.05)));
+                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());//(-34, 151);
+                Toast.makeText(getApplicationContext(), "You are at: " + currentLocation.latitude + ", " + currentLocation.longitude, Toast.LENGTH_LONG).show();
+                mMap.addMarker(new MarkerOptions().position(currentLocation).title("Where you are"));
+                mMap.addCircle(new CircleOptions().center(currentLocation).radius(1000));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 11));
+                mMap.setLatLngBoundsForCameraTarget(new LatLngBounds(currentLocation, currentLocation));
+
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                        //&& ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        Toast.makeText(getApplicationContext(), "Location Changed\n" +
+                                        "Lat: " + Math.abs(location.getLatitude() - currentLocation.latitude)
+                                        + "\nLong: " + Math.abs(location.getLongitude() - currentLocation.longitude)
+                                , Toast.LENGTH_SHORT).show();
+                        currentLocation = new LatLng(location.getLatitude(),location.getLongitude());
+                        mMap.clear();
+                        //mMap.addCircle(new CircleOptions().center(currentLocation).radius(1000));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 11));
+                        mMap.setLatLngBoundsForCameraTarget(new LatLngBounds(currentLocation, currentLocation));
+
+                        double roundedLat = Math.round(currentLocation.latitude*100)*0.01;
+                        double roundedLng = Math.round(currentLocation.longitude*100)*0.01;
+                        mMap.addCircle(new CircleOptions().center(new LatLng(roundedLat,roundedLng)).radius(1000));
+                        mMap.addMarker(new MarkerOptions().position(currentLocation).title("["+roundedLat+", "+roundedLng+"]"));
+//                        mMap.addPolygon(new PolygonOptions().add(
+//                                new LatLng(roundedLat,roundedLng), new LatLng(roundedLat+0.01,roundedLng),
+//                                new LatLng(roundedLat+0.01,roundedLng+0.01), new LatLng(roundedLat,roundedLng+0.01),
+//                                new LatLng(roundedLat,roundedLng)
+//                        )).setFillColor(Color.argb(128,0,0,255));
+                    }
+
+                    @Override
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+                        //
+                    }
+
+                    @Override
+                    public void onProviderEnabled(String provider) {
+                        //
+                    }
+
+                    @Override
+                    public void onProviderDisabled(String provider) {
+                        //
+                    }
+                });
             }
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();

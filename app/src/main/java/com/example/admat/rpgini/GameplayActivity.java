@@ -1,5 +1,6 @@
 package com.example.admat.rpgini;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -12,8 +13,12 @@ public class GameplayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gameplay);
 
+        Intent intent = getIntent();
+        double seed = intent.getDoubleExtra("seed",1337);
+
         gameView = (GameplayView) findViewById(R.id.gameplay);
         gameView.addButtonListeners(this);
+        gameView.setupBattle(seed);
     }
 
 //    // This method executes when the player starts the game

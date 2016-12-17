@@ -18,6 +18,16 @@ public class Enemy {
         name = "Gobbo "+frame;
     }
 
+    public Enemy (int frame, boolean isMagical, int powerLevel) {
+        this.frame = frame;
+
+        maxHp = Hp = powerLevel * powerLevel * 5;
+        powerMagic = isMagical?powerLevel:powerLevel/3;
+        powerPhys = isMagical?powerLevel/3:powerLevel;
+
+        name = "Rando "+frame;
+    }
+
     public int getFrame() {
         return frame;
     }

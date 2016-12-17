@@ -25,6 +25,7 @@ import org.w3c.dom.Text;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by galax_000 on 11/20/2016.
@@ -74,12 +75,6 @@ public class GameplayView extends SurfaceView implements Runnable {
         source = new Rect(0,0,16,16);
         destination = new Rect(0,0,1,1);
 
-        /// Setup Enemy List
-        enemyList = new LinkedList<Enemy>();
-        enemyList.add(new Enemy(6));
-        enemyList.add(new Enemy(12));
-        enemyList.add(new Enemy(18));
-
         /// Load Character Spritesheet
         Resources r = this.getContext().getResources();
         Drawable d = r.getDrawable(R.drawable.characters);
@@ -98,6 +93,25 @@ public class GameplayView extends SurfaceView implements Runnable {
         d = r.getDrawable(R.drawable.combat_background);
         d.setBounds(0,0,32,32);
         d.draw(new Canvas(backgroundBitmap));
+    }
+
+    public void setupBattle(double seed) {
+        Random rando = new Random((long)(seed*100));
+
+        int powerLevel = rando.nextInt() % 200;
+        powerLevel = powerLevel * powerLevel;
+        powerLevel = powerLevel / 400;
+
+        /// Setup Enemy List
+        enemyList = new LinkedList<Enemy>();
+        int enemyCount = (rando.nextInt() % 3)+1;
+        for(int i = 0; i < enemyCount; i++) {
+            enemyList.add(new Enemy(rando.nextInt(48), ((rando.nextInt() % 20) > 15), powerLevel));
+        }
+
+//        enemyList.add(new Enemy(6));
+//        enemyList.add(new Enemy(12));
+//        enemyList.add(new Enemy(18));
     }
 
     public void addButtonListeners(GameplayActivity activity) {
