@@ -1,11 +1,13 @@
 package com.example.admat.rpgini;
 
+import android.*;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -32,6 +34,11 @@ public class Main2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+        /// Request permission for the GPS
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            this.requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},1);
+        }
 
         database = new MyDB(getApplicationContext());
         cn = (EditText) findViewById(R.id.editText3);
@@ -69,7 +76,8 @@ public class Main2Activity extends AppCompatActivity {
                 }
                 else{
                     database.setCharName(username, cn.getText().toString(), table);
-                    Intent toGame = new Intent(Main2Activity.this,GameplayActivity.class);
+                    Intent toGame = new Intent(Main2Activity.this,MapsActivity.class);
+                    //Intent toGame = new Intent(Main2Activity.this,GameplayActivity.class);
                     toGame.putExtra("username",username);
                     startActivity(toGame);
                 }
