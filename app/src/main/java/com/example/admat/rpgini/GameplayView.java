@@ -108,7 +108,7 @@ public class GameplayView extends SurfaceView implements Runnable {
         for(int i = 0; i < enemyCount; i++) {
             enemyList.add(new Enemy(rando.nextInt(48), ((rando.nextInt() % 20) > 15), powerLevel));
         }
-        enemyAttackMS = (int)System.currentTimeMillis()+5000;
+        enemyAttackMS = (int)System.currentTimeMillis()+3000;
         enemyAttackLast = 0;
 
         //Need to set up player stats
@@ -282,7 +282,7 @@ public class GameplayView extends SurfaceView implements Runnable {
     public void doUpdate(double delta) {
         // We don't need this? Maybe put enemy attacks here?
         if (enemyAttackMS < (int)System.currentTimeMillis() && enemyList.size() > 0) {
-            enemyAttackMS = (int)System.currentTimeMillis() + 2500;
+            enemyAttackMS = (int)System.currentTimeMillis() + (3000/enemyList.size());
             Enemy enemy = (Enemy) enemyList.toArray()[enemyAttackLast++];
             enemyAttackLast = enemyAttackLast % enemyList.size();
             currentHealth -= enemy.getDamage();
