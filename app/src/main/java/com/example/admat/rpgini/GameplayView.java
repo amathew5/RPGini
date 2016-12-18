@@ -32,7 +32,7 @@ import java.util.Random;
  */
 public class GameplayView extends SurfaceView implements Runnable {
 
-    protected EditText gameplayLog;
+    protected EditText gameplayLog,gameplayStat;
     Thread gameplayThread = null;
     volatile boolean playing;
 
@@ -131,13 +131,14 @@ public class GameplayView extends SurfaceView implements Runnable {
 
     public void addButtonListeners(GameplayActivity activity) {
         gameplayLog = (EditText) activity.findViewById(R.id.editText_gameplayLog);
-        final String status = "Level: " + level + "     XP: " + xp + "\nHealth: " + health + "\nPhysical Damage: " + physical + "\nMagical Damage: " + magical;
-        gameplayLog.setText(status);
+        gameplayStat = (EditText) activity.findViewById(R.id.editText_gameplayStats);
+        final String status = "Level: " + level + "\nXP: " + xp + "\nHealth: " + health + "\nPhysical Damage: " + physical + "\nMagical Damage: " + magical;
+        gameplayStat.setText(status);
 
         ((Button) activity.findViewById(R.id.button_strength)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameplayLog.setText("Physical Hit: " + physical +  "!\n" + status);
+                gameplayLog.getText().append("\nPhysical Hit: " + physical + "!");
 
                 Enemy e = enemyList.get(0);
                 e.damageByStrength(physical);
@@ -149,7 +150,7 @@ public class GameplayView extends SurfaceView implements Runnable {
         ((Button) activity.findViewById(R.id.button_magic)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameplayLog.setText("Magical Hit: " + magical +  "!\n" + status);
+                gameplayLog.getText().append("\nMagical Hit: " + magical +  "!");
 
                 for (Enemy e : enemyList) {
                     e.damageByMagic(magical);
@@ -162,7 +163,7 @@ public class GameplayView extends SurfaceView implements Runnable {
         ((Button) activity.findViewById(R.id.button_block)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameplayLog.setText("You Blocked!\n" + status);
+                gameplayLog.getText().append("\nYou Blocked!");
             }
         });
 
