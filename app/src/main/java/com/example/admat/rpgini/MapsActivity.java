@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -56,6 +57,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(battleIntent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        ((TextView) findViewById(R.id.textview_playerStatus)).setText("Name: "+CurrentPlayerData.getInstance().getName()+
+                "\nLevel: "+CurrentPlayerData.getInstance().getLevel()+"\tXP: "+CurrentPlayerData.getInstance().getXp());
     }
 
 

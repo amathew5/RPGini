@@ -121,15 +121,16 @@ public class MainActivity extends AppCompatActivity {
                             eplogin.setText("");
                         }
                     } else { //if there is nothing returned
+                        CurrentPlayerData.reset();
                         ContentValues values = new ContentValues();
                         values.put(DbHelper.EmailUserEntry.COLUMN_NAME_USERNAME, eulogin.getText().toString());
                         values.put(DbHelper.EmailUserEntry.COLUMN_NAME_PASSWORD, eplogin.getText().toString());
-                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_PHYSICAL, 20);
-                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_MAGICAL, 20);
-                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_HEALTH, 100);
-                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_LEVEL, 1);
-                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_XP, 0);
-                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_CHARNAME, "Harambe");
+                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_PHYSICAL, CurrentPlayerData.getInstance().getPhysical());
+                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_MAGICAL, CurrentPlayerData.getInstance().getMagical());
+                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_HEALTH, CurrentPlayerData.getInstance().getHealth());
+                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_LEVEL, CurrentPlayerData.getInstance().getLevel());
+                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_XP, CurrentPlayerData.getInstance().getXp());
+                        values.put(DbHelper.EmailUserEntry.COLUMN_NAME_CHARNAME, CurrentPlayerData.getInstance().getName());
                         email = eulogin.getText().toString();
                         db.insertWithOnConflict(DbHelper.EmailUserEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
                         info.setText("Hi " + eulogin.getText().toString() + "\n" + "Your account has been created!");
@@ -185,13 +186,14 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                             else{
                                                 ContentValues values = new ContentValues();
+                                                CurrentPlayerData.reset();
                                                 values.put(DbHelper.FBUserEntry.COLUMN_NAME_USERNAME, email);
-                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_PHYSICAL, 20);
-                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_MAGICAL, 20);
-                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_HEALTH, 100);
-                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_LEVEL, 1);
-                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_XP, 0);
-                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_CHARNAME, "Harambe");
+                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_PHYSICAL, CurrentPlayerData.getInstance().getPhysical());
+                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_MAGICAL, CurrentPlayerData.getInstance().getMagical());
+                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_HEALTH, CurrentPlayerData.getInstance().getHealth());
+                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_LEVEL, CurrentPlayerData.getInstance().getLevel());
+                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_XP, CurrentPlayerData.getInstance().getXp());
+                                                values.put(DbHelper.FBUserEntry.COLUMN_NAME_CHARNAME, CurrentPlayerData.getInstance().getName());
                                                 db.insertWithOnConflict(DbHelper.FBUserEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
                                                 table = "fbusers";
                                             }

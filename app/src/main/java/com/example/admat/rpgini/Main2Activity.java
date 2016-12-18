@@ -30,6 +30,16 @@ public class Main2Activity extends AppCompatActivity {
     private Button newgame;
     private MyDB database;
 
+    protected void updateTextViews() {
+        cn.setText(CurrentPlayerData.getInstance().getName());
+        //cn.setText(CurrentPlayerData.getInstance().getName().toCharArray(),0,c.length());
+        phys.setText("Physical: " + CurrentPlayerData.getInstance().getPhysical());
+        magi.setText("Magical: " + CurrentPlayerData.getInstance().getMagical());
+        health.setText("Health: " + CurrentPlayerData.getInstance().getHealth());
+        level.setText("Level: " + CurrentPlayerData.getInstance().getLevel());
+        xp.setText("XP: " + CurrentPlayerData.getInstance().getXp());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,19 +63,8 @@ public class Main2Activity extends AppCompatActivity {
         Intent intent = getIntent();
         final String username = intent.getStringExtra("username");
         final String table = intent.getStringExtra("table");
-
-        String c = database.getCharName(username,table);
-        cn.setText(c.toCharArray(),0,c.length());
-        int p = database.getPhysical(username,table);
-        int m = database.getMagical(username,table);
-        int h = database.getHealth(username,table);
-        int l = database.getLevel(username,table);
-        int x = database.getXP(username,table);
-        phys.setText("Physical: " + p);
-        magi.setText("Magical: " + m);
-        health.setText("Health: " + h);
-        level.setText("Level: " + l);
-        xp.setText("XP: " + x);
+        CurrentPlayerData.getInstance().loadData(database,username,table);
+        updateTextViews();
 
         cont.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,19 +93,10 @@ public class Main2Activity extends AppCompatActivity {
                         "Yes",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                database.setCharName(username, "Harambe", table);
-                                database.setPhysical(username, 20, table);
-                                database.setMagical(username, 20, table);
-                                database.setHealth(username, 100, table);
-                                database.setLevel(username, 1, table);
-                                database.setXP(username, 0, table);
+                                CurrentPlayerData.reset();
+                                CurrentPlayerData.getInstance().saveData(database,username,table);
 
-                                cn.setText("Harambe".toCharArray(),0,"Harambe".length());
-                                phys.setText("Physical: " + 20);
-                                magi.setText("Magical: " + 20);
-                                health.setText("Health: " + 100);
-                                level.setText("Level: " + 1);
-                                xp.setText("XP: " + 0);
+                                updateTextViews();
 
                                 newgame.setEnabled(false);
                             }

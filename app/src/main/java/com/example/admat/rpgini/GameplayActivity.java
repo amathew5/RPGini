@@ -7,6 +7,9 @@ import android.widget.Toast;
 
 public class GameplayActivity extends AppCompatActivity {
 
+    private MyDB db;
+    private String username,table;
+
     GameplayView gameView;
 
     @Override
@@ -14,29 +17,39 @@ public class GameplayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gameplay);
 
-        Intent intent = getIntent();
-        double seed = intent.getDoubleExtra("seed",1337);
-
-        String username = intent.getStringExtra("username");
-        String table = intent.getStringExtra("table");
-
         gameView = (GameplayView) findViewById(R.id.gameplay);
-
-        gameView.setupBattle(seed,username,table);
         gameView.addButtonListeners(this, new OnGameEndListener() {
             @Override
             public void onGameEnd(boolean won) {
                 if (won) {
-                    //
-                    Toast.makeText(getApplicationContext(),"Congrats!",Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(),"Sux...",Toast.LENGTH_SHORT).show();
-                }
+                    if(CurrentPlayerData.getInstance().checkLevelUp()) {
+                        Toast.makeText(getApplicationContext(),"You leveled up!",Toast.LENGTH_SHORT).show();
+                    }
+                    CurrentPlayerData.getInstance().saveData(db,username,table);
+                } /*else {
+                    /// TODO: Find out why the below errors, but not the above.
+                    //Toast.makeText(getApplicationContext(),"You passed out.",Toast.LENGTH_SHORT).show();
+                }*/
 
                 finish();
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent intent = getIntent();
+        double seed = intent.getDoubleExtra("seed",1337);
+
+        username = intent.getStringExtra("username");
+        table = intent.getStringExtra("table");
+        db = new MyDB(getApplicationContext());
+
+        gameView = (GameplayView) findViewById(R.id.gameplay);
+        gameView.setupBattle(seed,username,table);
     }
 
 //    // This method executes when the player starts the game

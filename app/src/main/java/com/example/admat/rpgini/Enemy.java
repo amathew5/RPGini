@@ -42,11 +42,23 @@ public class Enemy {
     }
 
     public void damageByStrength(int i) {
-        Hp -= i;
+        if(powerPhys > powerMagic) {
+            // Enemy is Physical
+            Hp -= i;
+        } else {
+            // Enemy is Magical
+            Hp -= i*2;
+        }
     }
 
     public void damageByMagic(int i) {
-        Hp -= i;
+        if(powerPhys > powerMagic) {
+            // Enemy is Physical
+            Hp -= i*2;
+        } else {
+            // Enemy is Magical
+            Hp -= i;
+        }
     }
 
     public String getName() {
@@ -55,5 +67,15 @@ public class Enemy {
 
     public int getLvl() {
         return level;
+    }
+
+    public int getDamage() {
+        if(powerPhys > powerMagic) {
+            // Enemy is Physical
+            return powerPhys;
+        } else {
+            // Enemy is Magical
+            return powerMagic;
+        }
     }
 }

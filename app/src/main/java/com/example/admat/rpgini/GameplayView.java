@@ -5,11 +5,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -17,10 +15,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -49,15 +44,15 @@ public class GameplayView extends SurfaceView implements Runnable {
     private Rect source, destination;
 
     private double dt;
-    private int fps, scaledCharacterWidth;
+    private int fps, scaledCharacterWidth, enemyAttackMS, enemyAttackLast=0;
 
     private int realResolution = 0;
     private final int virtualResolution = 48;
     private int characterBitmapFrameWidth;
     private int characterBitmapFrameHeight;
 
-    private int physical,magical,health,xp,level;
     private String username,table;
+    private int currentHealth, xpEarned=0;
 
     public GameplayView(Context context) {
         super(context);
@@ -106,41 +101,46 @@ public class GameplayView extends SurfaceView implements Runnable {
         int powerLevel = rando.nextInt() % 200;
         powerLevel = powerLevel * powerLevel;
         powerLevel = powerLevel / 400;
+        xpEarned=0;
 
         /// Setup Enemy List
         enemyList = new LinkedList<Enemy>();
         for(int i = 0; i < enemyCount; i++) {
             enemyList.add(new Enemy(rando.nextInt(48), ((rando.nextInt() % 20) > 15), powerLevel));
         }
+        enemyAttackMS = (int)System.currentTimeMillis()+5000;
+        enemyAttackLast = 0;
 
         //Need to set up player stats
         db = new MyDB(this.getContext());
         this.username = username;
         this.table = table;
-        physical = db.getPhysical(username,table);
-        magical = db.getMagical(username,table);
-        health = db.getHealth(username,table);
-        level = db.getLevel(username,table);
-        xp = db.getXP(username,table);
+        CurrentPlayerData.getInstance().loadData(db,username,table);
+        currentHealth = CurrentPlayerData.getInstance().getHealth();
+
+        /// Update Player Status
+        final String status = "Level: " + CurrentPlayerData.getInstance().getLevel() +
+                "\nXP: " + CurrentPlayerData.getInstance().getXp() +
+                "\nHealth: " + currentHealth +
+                "\nPhysical: " + CurrentPlayerData.getInstance().getPhysical() +
+                "\nMagical: " + CurrentPlayerData.getInstance().getMagical();
+        gameplayStat.setText(status);
 
     }
 
     public void addButtonListeners(GameplayActivity activity, OnGameEndListener gameEnd) {
         gameplayLog = (EditText) activity.findViewById(R.id.editText_gameplayLog);
         gameplayStat = (EditText) activity.findViewById(R.id.editText_gameplayStats);
-        final String status = "Level: " + level + "\nXP: " + xp + "\nHealth: " + health + "\nPhysical Damage: " + physical + "\nMagical Damage: " + magical;
-        gameplayStat.setText(status);
 
         this.gameEnd = gameEnd;
-
 
         ((Button) activity.findViewById(R.id.button_strength)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameplayLog.getText().append("\nPhysical Hit: " + physical + "!");
+                gameplayLog.getText().append("\nPhysical Hit: " + CurrentPlayerData.getInstance().getPhysical() + "!");
 
                 Enemy e = enemyList.get(0);
-                e.damageByStrength(physical);
+                e.damageByStrength(CurrentPlayerData.getInstance().getPhysical());
 
                 updateCombat();
             }
@@ -149,10 +149,10 @@ public class GameplayView extends SurfaceView implements Runnable {
         ((Button) activity.findViewById(R.id.button_magic)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameplayLog.getText().append("\nMagical Hit: " + magical +  "!");
+                gameplayLog.getText().append("\nMagical Hit: " + CurrentPlayerData.getInstance().getMagical() +  "!");
 
                 for (Enemy e : enemyList) {
-                    e.damageByMagic(magical);
+                    e.damageByMagic(CurrentPlayerData.getInstance().getMagical());
                 }
 
                 updateCombat();
@@ -193,6 +193,7 @@ public class GameplayView extends SurfaceView implements Runnable {
             Enemy e = iter.next();
 
             if (e.getHp() <= 0) {
+                xpEarned += e.getLvl()*5;
                 iter.remove();
                 gameplayLog.getText().append("\n"+e.getName()+" died!");
             }
@@ -200,7 +201,14 @@ public class GameplayView extends SurfaceView implements Runnable {
 
         if(enemyList.size() == 0) {
             /// We won!
+            CurrentPlayerData.getInstance().addXp(xpEarned);
+            Toast.makeText(getContext(),"You gained "+xpEarned+" XP!",Toast.LENGTH_SHORT).show();
             gameEnd.onGameEnd(true);
+        }
+
+        if(currentHealth < 1) {
+            /// Boo...
+            gameEnd.onGameEnd(false);
         }
     }
 
@@ -266,11 +274,24 @@ public class GameplayView extends SurfaceView implements Runnable {
             }
         }
 
+        drawHealthBar(c,0,(int)(virtualResolution * 9.0/10.0),virtualResolution,(int)(virtualResolution/9.0),(float)(currentHealth*1.0f/CurrentPlayerData.getInstance().getHealth()));
+
         mHolder.unlockCanvasAndPost(c);
     }
 
     public void doUpdate(double delta) {
         // We don't need this? Maybe put enemy attacks here?
+        if (enemyAttackMS < (int)System.currentTimeMillis() && enemyList.size() > 0) {
+            enemyAttackMS = (int)System.currentTimeMillis() + 2500;
+            Enemy enemy = (Enemy) enemyList.toArray()[enemyAttackLast++];
+            enemyAttackLast = enemyAttackLast % enemyList.size();
+            currentHealth -= enemy.getDamage();
+            ///gameplayLog.getText().append("\n"+enemy.getName()+" hit you: " + enemy.getDamage() + "!"); /// TODO: FIX THIS! We can't touch the UI thread from here!
+            //Toast.makeText(getContext(),enemy.getName()+ " did "+enemy.getDamage()+" damage to you!",Toast.LENGTH_SHORT).show();
+
+            Log.d("DEBUG",enemy.getName()+ " did "+enemy.getDamage()+" damage to you!");
+            updateCombat();
+        }
     }
 
     @Override
