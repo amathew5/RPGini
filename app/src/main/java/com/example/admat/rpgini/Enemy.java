@@ -8,7 +8,7 @@ public class Enemy {
     private String name;
     private int maxHp, Hp;
     private int powerPhys, powerMagic;
-    private int frame;
+    private int frame, level;
 
     public Enemy (int frame) {
         this.frame = frame;
@@ -21,6 +21,7 @@ public class Enemy {
     public Enemy (int frame, boolean isMagical, int powerLevel) {
         this.frame = frame;
 
+        level = powerLevel;
         maxHp = Hp = powerLevel * powerLevel * 5;
         powerMagic = isMagical?powerLevel:powerLevel/3;
         powerPhys = isMagical?powerLevel/3:powerLevel;
@@ -50,5 +51,9 @@ public class Enemy {
 
     public String getName() {
         return name;
+    }
+
+    public int getLvl() {
+        return level;
     }
 }

@@ -3,6 +3,7 @@ package com.example.admat.rpgini;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 public class GameplayActivity extends AppCompatActivity {
 
@@ -17,8 +18,20 @@ public class GameplayActivity extends AppCompatActivity {
         double seed = intent.getDoubleExtra("seed",1337);
 
         gameView = (GameplayView) findViewById(R.id.gameplay);
-        gameView.addButtonListeners(this);
         gameView.setupBattle(seed);
+        gameView.addButtonListeners(this, new OnGameEndListener() {
+            @Override
+            public void onGameEnd(boolean won) {
+                if (won) {
+                    //
+                    Toast.makeText(getApplicationContext(),"Congrats!",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),"Sux...",Toast.LENGTH_SHORT).show();
+                }
+
+                finish();
+            }
+        });
     }
 
 //    // This method executes when the player starts the game

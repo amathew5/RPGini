@@ -35,6 +35,7 @@ public class GameplayView extends SurfaceView implements Runnable {
     protected EditText gameplayLog;
     Thread gameplayThread = null;
     volatile boolean playing;
+    OnGameEndListener gameEnd;
 
     private List<Enemy> enemyList;
 
@@ -98,24 +99,21 @@ public class GameplayView extends SurfaceView implements Runnable {
     public void setupBattle(double seed) {
         Random rando = new Random((long)(seed*100));
 
+        int enemyCount = (rando.nextInt() % 3)+1;
         int powerLevel = rando.nextInt() % 200;
         powerLevel = powerLevel * powerLevel;
         powerLevel = powerLevel / 400;
 
         /// Setup Enemy List
         enemyList = new LinkedList<Enemy>();
-        int enemyCount = (rando.nextInt() % 3)+1;
         for(int i = 0; i < enemyCount; i++) {
             enemyList.add(new Enemy(rando.nextInt(48), ((rando.nextInt() % 20) > 15), powerLevel));
         }
-
-//        enemyList.add(new Enemy(6));
-//        enemyList.add(new Enemy(12));
-//        enemyList.add(new Enemy(18));
     }
 
-    public void addButtonListeners(GameplayActivity activity) {
+    public void addButtonListeners(GameplayActivity activity, OnGameEndListener gameEnd) {
         gameplayLog = (EditText) activity.findViewById(R.id.editText_gameplayLog);
+        this.gameEnd = gameEnd;
 
         ((Button) activity.findViewById(R.id.button_strength)).setOnClickListener(new OnClickListener() {
             @Override
@@ -180,6 +178,11 @@ public class GameplayView extends SurfaceView implements Runnable {
                 gameplayLog.getText().append("\n"+e.getName()+" died!");
             }
         }
+
+        if(enemyList.size() == 0) {
+            /// We won!
+            gameEnd.onGameEnd(true);
+        }
     }
 
     @Override
@@ -218,7 +221,7 @@ public class GameplayView extends SurfaceView implements Runnable {
         drawBackground(c);
         //c.drawRect( 0, 0, c.getWidth(), c.getHeight(), mPaint);
 
-        mPaint.setTextSize(scaledCharacterWidth/2);
+        mPaint.setTextSize(scaledCharacterWidth/4);
 
         //c.drawRect(0,0,scaledCharacterWidth,scaledCharacterWidth,mPaint);
 //        c.drawText("Update: "+test, 0,test, mPaint);
@@ -280,6 +283,7 @@ public class GameplayView extends SurfaceView implements Runnable {
 
 
         c.drawText(""+e.getHp()+"/"+e.getMaxHp(),(float) (x*scaledFactor),(float) ((y-4)*scaledFactor),mPaint);
+        c.drawText("Lvl: "+e.getLvl(),(float) (x*scaledFactor),(float) ((y-6)*scaledFactor),mPaint);
     }
 
     private void drawCharacter(Canvas c, int x, int y, int frameId) {
