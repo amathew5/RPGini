@@ -79,6 +79,7 @@ public class Main2Activity extends AppCompatActivity {
                     Intent toGame = new Intent(Main2Activity.this,MapsActivity.class);
                     //Intent toGame = new Intent(Main2Activity.this,GameplayActivity.class);
                     toGame.putExtra("username",username);
+                    toGame.putExtra("table",table);
                     startActivity(toGame);
                 }
             }
@@ -106,6 +107,8 @@ public class Main2Activity extends AppCompatActivity {
                                 health.setText("Health: " + 100);
                                 level.setText("Level: " + 1);
                                 xp.setText("XP: " + 0);
+
+                                newgame.setEnabled(false);
                             }
                         });
 

@@ -38,6 +38,8 @@ public class GameplayView extends SurfaceView implements Runnable {
 
     private List<Enemy> enemyList;
 
+    private MyDB db;
+
     private SurfaceHolder mHolder;
     private Paint mPaint;
     private Bitmap characterBitmap;
@@ -52,6 +54,9 @@ public class GameplayView extends SurfaceView implements Runnable {
     private final int virtualResolution = 48;
     private int characterBitmapFrameWidth;
     private int characterBitmapFrameHeight;
+
+    private int physical,magical,health,xp,level;
+    private String username,table;
 
     public GameplayView(Context context) {
         super(context);
@@ -95,7 +100,7 @@ public class GameplayView extends SurfaceView implements Runnable {
         d.draw(new Canvas(backgroundBitmap));
     }
 
-    public void setupBattle(double seed) {
+    public void setupBattle(double seed, String username, String table) {
         Random rando = new Random((long)(seed*100));
 
         int powerLevel = rando.nextInt() % 200;
@@ -109,6 +114,16 @@ public class GameplayView extends SurfaceView implements Runnable {
             enemyList.add(new Enemy(rando.nextInt(48), ((rando.nextInt() % 20) > 15), powerLevel));
         }
 
+        //Need to set up player stats
+        db = new MyDB(this.getContext());
+        this.username = username;
+        this.table = table;
+        physical = db.getPhysical(username,table);
+        magical = db.getMagical(username,table);
+        health = db.getHealth(username,table);
+        level = db.getLevel(username,table);
+        xp = db.getXP(username,table);
+
 //        enemyList.add(new Enemy(6));
 //        enemyList.add(new Enemy(12));
 //        enemyList.add(new Enemy(18));
@@ -116,14 +131,16 @@ public class GameplayView extends SurfaceView implements Runnable {
 
     public void addButtonListeners(GameplayActivity activity) {
         gameplayLog = (EditText) activity.findViewById(R.id.editText_gameplayLog);
+        final String status = "Level: " + level + "     XP: " + xp + "\nHealth: " + health + "\nPhysical Damage: " + physical + "\nMagical Damage: " + magical;
+        gameplayLog.setText(status);
 
         ((Button) activity.findViewById(R.id.button_strength)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameplayLog.getText().append("\nYou hit one!");
+                gameplayLog.setText("Physical Hit: " + physical +  "!\n" + status);
 
                 Enemy e = enemyList.get(0);
-                e.damageByStrength(15);
+                e.damageByStrength(physical);
 
                 updateCombat();
             }
@@ -132,10 +149,10 @@ public class GameplayView extends SurfaceView implements Runnable {
         ((Button) activity.findViewById(R.id.button_magic)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameplayLog.getText().append("\nYou hit them all!");
+                gameplayLog.setText("Magical Hit: " + magical +  "!\n" + status);
 
                 for (Enemy e : enemyList) {
-                    e.damageByMagic(5);
+                    e.damageByMagic(magical);
                 }
 
                 updateCombat();
@@ -145,7 +162,7 @@ public class GameplayView extends SurfaceView implements Runnable {
         ((Button) activity.findViewById(R.id.button_block)).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameplayLog.getText().append("\nYou blocked!");
+                gameplayLog.setText("You Blocked!\n" + status);
             }
         });
 

@@ -41,7 +41,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
+        final String username = intent.getStringExtra("username");
+        final String table = intent.getStringExtra("table");
 
         ((Button) findViewById(R.id.button_lookForTrouble)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +51,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(currentLocation != null) {
                     battleIntent.putExtra("seed",(currentLocation.latitude % 1337)+(currentLocation.longitude % 455));
                 }
+                battleIntent.putExtra("username",username);
+                battleIntent.putExtra("table",table);
                 startActivity(battleIntent);
             }
         });

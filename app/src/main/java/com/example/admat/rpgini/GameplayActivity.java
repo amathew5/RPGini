@@ -16,9 +16,12 @@ public class GameplayActivity extends AppCompatActivity {
         Intent intent = getIntent();
         double seed = intent.getDoubleExtra("seed",1337);
 
+        String username = intent.getStringExtra("username");
+        String table = intent.getStringExtra("table");
+
         gameView = (GameplayView) findViewById(R.id.gameplay);
+        gameView.setupBattle(seed,username,table);
         gameView.addButtonListeners(this);
-        gameView.setupBattle(seed);
     }
 
 //    // This method executes when the player starts the game
