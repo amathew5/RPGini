@@ -15,7 +15,7 @@ public class Enemy {
 
         maxHp = Hp = 50;
         powerMagic = powerPhys = 5;
-        name = "Gobbo "+frame;
+        name = "Enemy "+frame;
     }
 
     public Enemy (int frame, boolean isMagical, int powerLevel) {
@@ -23,10 +23,10 @@ public class Enemy {
 
         level = powerLevel;
         maxHp = Hp = powerLevel * powerLevel * 5;
-        powerMagic = isMagical?powerLevel:powerLevel/3;
-        powerPhys = isMagical?powerLevel/3:powerLevel;
+        powerMagic = isMagical?powerLevel*5:powerLevel/3;
+        powerPhys = isMagical?powerLevel/3:powerLevel*5;
 
-        name = "Rando "+frame;
+        name = "Enemy "+frame;
     }
 
     public int getFrame() {
@@ -41,23 +41,27 @@ public class Enemy {
         return maxHp;
     }
 
-    public void damageByStrength(int i) {
+    public int damageByStrength(int i) {
         if(powerPhys > powerMagic) {
             // Enemy is Physical
             Hp -= i;
+            return i;
         } else {
             // Enemy is Magical
-            Hp -= i*2;
+            Hp -= (i*3)/2;
+            return (i*3)/2;
         }
     }
 
-    public void damageByMagic(int i) {
+    public int damageByMagic(int i) {
         if(powerPhys > powerMagic) {
             // Enemy is Physical
-            Hp -= i*2;
+            Hp -= (i*3)/2;
+            return (i*3)/2;
         } else {
             // Enemy is Magical
             Hp -= i;
+            return i;
         }
     }
 
@@ -77,5 +81,9 @@ public class Enemy {
             // Enemy is Magical
             return powerMagic;
         }
+    }
+
+    public int getXpReward() {
+        return level*5;
     }
 }

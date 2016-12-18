@@ -91,7 +91,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(getApplicationContext(), "You are at: " + currentLocation.latitude + ", " + currentLocation.longitude, Toast.LENGTH_LONG).show();
                 mMap.addMarker(new MarkerOptions().position(currentLocation).title("Where you are"));
                 mMap.addCircle(new CircleOptions().center(currentLocation).radius(1000));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 11));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12));
                 mMap.setLatLngBoundsForCameraTarget(new LatLngBounds(currentLocation, currentLocation));
 
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
@@ -108,7 +108,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         currentLocation = new LatLng(location.getLatitude(),location.getLongitude());
                         mMap.clear();
                         //mMap.addCircle(new CircleOptions().center(currentLocation).radius(1000));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 11));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12));
                         mMap.setLatLngBoundsForCameraTarget(new LatLngBounds(currentLocation, currentLocation));
 
                         double roundedLat = Math.round(currentLocation.latitude*100)*0.01;

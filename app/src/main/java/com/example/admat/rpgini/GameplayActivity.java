@@ -26,10 +26,10 @@ public class GameplayActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"You leveled up!",Toast.LENGTH_SHORT).show();
                     }
                     CurrentPlayerData.getInstance().saveData(db,username,table);
-                } /*else {
+                } else {
                     /// TODO: Find out why the below errors, but not the above.
-                    //Toast.makeText(getApplicationContext(),"You passed out.",Toast.LENGTH_SHORT).show();
-                }*/
+                    Toast.makeText(getApplicationContext(),"You passed out.",Toast.LENGTH_SHORT).show();
+                }
 
                 finish();
             }

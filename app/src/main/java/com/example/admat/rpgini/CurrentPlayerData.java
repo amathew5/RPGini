@@ -19,9 +19,9 @@ public class CurrentPlayerData {
 
     private CurrentPlayerData() {
         name = "Harambe";
-        physical=20;
-        magical=10;
-        health=100;
+        physical=10;
+        magical=5;
+        health=25;
         xp=0;
         level=1;
     }
@@ -81,12 +81,13 @@ public class CurrentPlayerData {
     }
 
     public int getNextXp() {
-        return level * level * 100;
+        //return level * level * 50;
+        return level * 100;
     }
 
     public boolean checkLevelUp() {
-        if(xp > getNextXp()) {
-            health += (level * 50);
+        if(xp >= getNextXp()) {
+            health += (level * 10);
             xp -= getNextXp();
             level++;
             physical += Math.abs(Math.cos(Math.toRadians(level*45)) * 5);
